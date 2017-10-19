@@ -1,0 +1,24 @@
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+index a6425c5..ab3c9a8 100755
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -862,6 +862,19 @@
+ 			status = "disabled";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++
++			gl_gyro: gl_gyro@68 {
++				compatible = "gl_mpu6050";
++				reg = <0x68>;
++				status = "okay";
++			};
++
++			lcd_ssd1306: lcd_ssd1306@3c {
++				compatible = "DAndy,lcd_ssd1306";
++				reg = <0x3c>;
++				status = "okay";
++
++			};
+ 		};
+ 
+ 		i2c1: i2c@01c2b000 {

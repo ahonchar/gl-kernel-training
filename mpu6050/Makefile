@@ -1,26 +1,17 @@
 #
 # mpu6050 accelerometer & gyroscope
 #
-ifneq ($(KERNELRELEASE),)
 
 obj-m := mpu6050.o
 
-else
+
+KERNELDIR = "{armbian_dir}/cache/sources/linux-mainline/linux-4.14.y"
+
+export ARCH=arm
+export CROSS_COMPILE=arm-linux-gnueabihf-
 
 
-ifeq ($(KERNELDIR),)
-ifeq ($(BBB_KERNEL),)
-	$(error Path to kernel tree - KERNELDIR or BBB_KERNEL variable is not defined!)
-endif
-endif
-
-KERNELDIR ?= $(BBB_KERNEL)
-
-export ARCH = arm
-export CROSS_COMPILE ?= arm-linux-gnueabihf-
-
-
-.PHONY: all clean
+.PHONY: all clean dtb
 
 all:
 	$(MAKE) -C $(KERNELDIR) M=$(CURDIR) modules
@@ -28,5 +19,3 @@ all:
 clean:
 	$(MAKE) -C $(KERNELDIR) M=$(CURDIR) clean
 
-
-endif
