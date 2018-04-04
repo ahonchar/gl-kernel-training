@@ -4,8 +4,12 @@
 #include <linux/err.h>
 #include <linux/uaccess.h>
 
+#define CLASS_NAME	"chrdev"
 #define DEVICE_NAME	"chrdev_example"
 #define BUFFER_SIZE	1024
+
+static struct class *pclass;
+static struct device *pdev;
 
 static int major;
 static int is_open;
@@ -92,13 +96,32 @@ static int chrdev_init(void)
 		return major;
 	}
 	pr_info("chrdev: register_chrdev ok, major = %d\n", major);
-	
+
+	pclass = class_create(THIS_MODULE, CLASS_NAME);
+	if (IS_ERR(pclass)) {
+		unregister_chrdev(major, DEVICE_NAME);
+		pr_err("chrdev: class_create failed\n");
+		return PTR_ERR(pclass);
+	}
+	pr_info("chrdev: device class created successfully\n");
+
+	pdev = device_create(pclass, NULL, MKDEV(major, 0), NULL, CLASS_NAME"0");
+	if (IS_ERR(pdev)) {
+		class_destroy(pclass);
+		unregister_chrdev(major, DEVICE_NAME);
+		pr_err("chrdev: device_create failed\n");
+		return PTR_ERR(pdev);
+	}
+	pr_info("chrdev: device node created successfully\n");
+
 	pr_info("chrdev: module loaded\n");
 	return 0;
 }
 
 static void chrdev_exit(void)
 {
+	device_destroy(pclass, MKDEV(major, 0));
+	class_destroy(pclass);
 	unregister_chrdev(major, DEVICE_NAME);
 
 	pr_info("chrdev: module exited\n");
