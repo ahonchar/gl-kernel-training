@@ -37,6 +37,8 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 {
 	int ret;
 
+	pr_info("chrdev: read from file %s\n", filep->f_path.dentry->d_iname);
+
 	if (len > data_size) len = data_size;
 
 	ret = copy_to_user(buffer, data_buffer, len);
@@ -53,6 +55,8 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset)
 {
 	int ret;
+
+	pr_info("chrdev: write to file %s\n", filep->f_path.dentry->d_iname);
 
 	data_size = len;
 	if (data_size > BUFFER_SIZE) data_size = BUFFER_SIZE;
